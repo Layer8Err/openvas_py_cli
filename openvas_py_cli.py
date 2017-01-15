@@ -1,10 +1,12 @@
 #! /usr/bin/python3
 # # openvas_py_cli.py
-# ###################################
-# #  __  __  ____  _  _ ___   ____  #
-# #  \ \_\ \ \ .,\ \\//  //  //__   #
-# #   \_\`\_\ \_\_\ ||  //_ //___   #
-# ###################################
+# ###################################################
+# #   ___  __  __ ___      ___   ___       ___ _ _  #
+# #  / _ \|  \/  | _ \__ _|_  ) | _ \_  _ / __| (_) #
+# # | (_) | |\/| |  _/\ V // /  |  _/ || | (__| | | #
+# #  \___/|_|  |_|_|   \_//___| |_|  \_, |\___|_|_| #
+# #                                  |__/           #
+# ###################################################
 # # OpenVAS Python (3) CLI Manageer #
 # # Project started 12/28/2016      #
 # ###################################
@@ -78,7 +80,6 @@ def getTargets():
 
     return target_names
 
-
 def getConfigs(): # return config formats as a dictionary
     vasConfigs = runCommand(ovpnAuth + " -i -X '<get_configs/>'")
     cfgsXML = parseXML(vasConfigs) # get root XML from vasConfigs
@@ -134,22 +135,6 @@ def getReports(): # Get OpenVAS reports, return dict
         VASReportsDict = dict([ (r.rptid, r.rptname) for r in VASReportsTable ]) # Create dict of report codes and task names
     return VASReportsDict
 
-
-## Get OpenVAS targets
-print("OpenVAS targets:")
-target_names = getTargets()
-for t in target_names:
-    print(t)
-
-## Get OpenVAS configs
-print("Full and fast config:")
-configDict = getConfigs()
-print(list(configDict.keys())[list(configDict.values()).index("Full and fast")]) # attempt to find dictionary key from definition
-
-## Get OpenVAS report formats
-#rptFormatsDict = getReportFormats()
-#txt_fmtcode = str(rptFormatsDict.get("TXT")) # Save code for text format
-
 def reportsMenu(rptsDict):
     class rptMenuItem(object):
         def __init__(self, menuIndex, rptid, rptname):
@@ -175,21 +160,32 @@ def reportsMenu(rptsDict):
     return rptID
 
 
+## Get OpenVAS targets
+print("OpenVAS targets:")
+target_names = getTargets()
+for t in target_names:
+    print(t)
+
+## Get OpenVAS configs
+print("Full and fast config:")
+configDict = getConfigs()
+print(list(configDict.keys())[list(configDict.values()).index("Full and fast")]) # attempt to find dictionary key from definition
+
+## Get OpenVAS targets
+print("OpenVAS targets:")
+target_names = getTargets()
+for t in target_names:
+    print(t)
+
+## Get OpenVAS configs
+print("Full and fast config:")
+configDict = getConfigs()
+print(list(configDict.keys())[list(configDict.values()).index("Full and fast")]) # attempt to find dictionary key from definition
+
 ## Get OpenVAS reports
 print("OpenVAS reports:")
 reportDict = getReports() # get dict of report IDs and task names
 rptID = reportsMenu(reportDict) # list menu of reports
-
-#rptID = ""
-# for k, v in reportDict.items():
-#     print("%s\t%s" % (k, v)) # print the ids and report names
-#     #rptID = k
-
-# rptID = list(reportDict.keys())[list(reportDict.values()).index("BigB0x")] # set the report ID from the report name
-## Get Single report TXT
-# ToDo: Create a menu to drive selection
-#rptIndex = 1
-#rptID = report_ids[rptIndex] # For test purposes we are just grabbing the first report on the list
 
 ## Output OpenVAS report text
 showRptYN = input("Do you want to view the report for %s [y/N]: " % (reportDict[rptID]))
@@ -197,76 +193,3 @@ if showRptYN[:1].lower() == "y":
     print("OpenVAS report for %s:" % (reportDict[rptID]))
     decodedRpt = getTxtRpt(rptID) # decode report
     print(decodedRpt.decode('utf-8')) # print decoded report
-
-
-#print(decodedReport.decode('utf-8')) # display the decoded report
-# Export decoded report to file.txt
-# outFilePath = outFilePath + str(report_ids[rptIndex]) + ".txt"
-# outFile = open(outFilePath, 'w') # Open the output file with the 'w' write flag
-# outFile.write(decodedReport.decode('utf-8')) # Write out the file as utf-8
-
-#################
-## ToDo Notes:
-## ToDo (part 1 - reporting)
-#
-## Get report ouput formats (Save to dict) ~Done
-#   (currently text only , not xml)
-#    ovpnAuth + " -F"
-#
-## Get OpenVAS configs ~Done
-#   ovpnAuth + " -i -X '<get_configs/>'"
-#
-## Get OpenVAS targets ~Done
-#   ovpnAuth + " -i -X '<get_targets/>'"
-#
-## Get OpenVAS tasks
-#   ovpnAuth + " -i -X '<get_tasks/>'"
-#
-## Get OpenVAS reports ~Done
-#   ovpnAuth + " -i -X '<get_reports/>'"
-#
-## Get OpenVAS report text ~Done
-#   ovpnAuth + ' -i -X \'<get_reports report_id="' + rptOnID + '" format_id="' + txt_fmtcode + '"/>\''
-#
-## ToDo (part 2 - interaction)
-## Transform into a fully dynamic tool based on omp -xml='<help/>' # to allow for future flexibility
-#
-## Create OpenVAS targets
-# <create_target/>
-#
-## Create OpenVAS tasks
-# <create_task/>
-#
-## Create OpenVAS configs
-# <create_config/>
-
-#parser3 = etree.XMLParser(ns_clean=True) # POC reverse
-#tree3 = etree.parse(StringIO((etree.tostring(rootXML)).decode('utf-8')), parser3) # POC reverse
-
-#print(etree.tostring(rootXML))
-#print(rootXML[0].attrib)
-
-#listXML(rootXML)
-#print(etree.tostring(tree))
-
-#rootXML[0].tag = target
-
-#for i in range (0, len(rootXML)): #step through depth (max depth = len(rootXML))
-#    print(rootXML[i].tag) #print XML tag (should be a string)
-#    print(rootXML[i].attrib) #print XML attribute (attributes are in dictionary form)
-#    #rootXML[i].attrib('id')
-
-#####################
-## Legacy debug code
-
-#for line in info:
-#    print(line.decode('utf-8'), end='') # end='' done to prevent duplicating new lines
-
-#tree = etree.parse(info)
-#rootXML = tree.getroot()
-#rootXML[0]
-
-#print(etree.tostring(rootXML, encoding='unicode', pretty_print=True))
-#listXML(rootXML) # list tag & attrib
-#tree = etree.ElementTree(rootXML) # To allow elemental traversal
-## Some XPath stuff
