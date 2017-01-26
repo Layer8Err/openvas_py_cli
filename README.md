@@ -11,4 +11,4 @@ Some future plans for this script are to modify it to accept command line argume
 
 Ultimately the openvas-omp.rb project really should be updated and this should just become a way to read reports...
 
-Ruby is full of gems
+Ruby is the future
