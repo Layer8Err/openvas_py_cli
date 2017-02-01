@@ -12,7 +12,7 @@
 # ###################################
 ## Static Variables:
 ovpnUser = 'admin'      #Your OpenVAS username
-ovpnPass = '' 		#Your OpenVAS password
+ovpnPass = '' 		    #Your OpenVAS password
 ovpnIP = '127.0.0.1'    #OpenVAS IP (localhost)
 ovpnPort = '9390'       #OpenVAS port (9390 is default)
 ovpnAuth = "omp -u " + ovpnUser + " -w " + ovpnPass + " -h " + ovpnIP + " -p " + ovpnPort
@@ -150,46 +150,37 @@ def reportsMenu(rptsDict):
         menuCount = menuCount + 1
     
     menuDict = dict([ (m.menuIndex, m.rptid) for m in menuList ]) # Create dict of report codes and task names
-
     for menuItem in menuList:
         print("%s\t%s\t%s" % (menuItem.menuIndex, menuItem.rptid, menuItem.rptname))
     
-    choice = input("Which report do you want to read: ")
+    choice = input("rpt# > ")
     rptID = menuDict[int(choice)]
     #rptID = menuList[int(choice)].rptid
     return rptID
 
-
-## Get OpenVAS targets
-print("OpenVAS targets:")
-target_names = getTargets()
-for t in target_names:
-    print(t)
-
-## Get OpenVAS configs
-print("Full and fast config:")
-configDict = getConfigs()
-print(list(configDict.keys())[list(configDict.values()).index("Full and fast")]) # attempt to find dictionary key from definition
-
-## Get OpenVAS targets
-print("OpenVAS targets:")
-target_names = getTargets()
-for t in target_names:
-    print(t)
-
-## Get OpenVAS configs
-print("Full and fast config:")
-configDict = getConfigs()
-print(list(configDict.keys())[list(configDict.values()).index("Full and fast")]) # attempt to find dictionary key from definition
-
-## Get OpenVAS reports
-print("OpenVAS reports:")
-reportDict = getReports() # get dict of report IDs and task names
-rptID = reportsMenu(reportDict) # list menu of reports
-
-## Output OpenVAS report text
-showRptYN = input("Do you want to view the report for %s [y/N]: " % (reportDict[rptID]))
-if showRptYN[:1].lower() == "y":
+def readReport(rptsDict, rptID):
     print("OpenVAS report for %s:" % (reportDict[rptID]))
     decodedRpt = getTxtRpt(rptID) # decode report
-    print(decodedRpt.decode('utf-8')) # print decoded report
+    print(decodedRpt.decode('utf-8'))
+
+## Get OpenVAS targets
+target_names = getTargets() # Array of target_names
+
+## Get OpenVAS config
+configDict = getConfigs() # Dictionary of config types
+full_fast_config_id = list(configDict.keys())[list(configDict.values()).index("Full and fast")] # configID of Full and fast scan config
+
+## Get OpenVAS reports
+print("Choose OpenVAS report to read:")
+reportDict = getReports() # get dict of report IDs and task names
+rptID = reportsMenu(reportDict) # get report ID from user selection from reportDict
+readReport(reportDict, rptID) # read the selected report
+
+SaveRptYN = input("Do you want to save the report for %s [y/N]: " % (reportDict[rptID]))
+
+if SaveRptYN[:1].lower() == "y":
+    #outFilePath = outFilePath + str(rptID) + ".txt" # Uses the report ID as the name of the file
+    outFilePath = outFilePath + str(reportDict[rptID]) + ".txt" # Uses the target name as the name of the file
+    outFile = open(outFilePath, 'w') # Open the output file with the 'w' write flag
+    #outFile = open(outFilePath, 'a') # Open the output file with the 'w' write flag
+    outFile.write(getTxtRpt(rptID).decode('utf-8')) # Write out the file as utf-8
